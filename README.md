@@ -6,9 +6,9 @@ Landing page moderna, estratégica e orientada à conversão, desenvolvida para 
 
 ## 🌐 Acesse o projeto
 
-🔗 **Deploy:** *(adicione aqui o link — Vercel/Netlify)*
+🔗 **Deploy:** https://esrtechinside.vercel.app/
 
-📸 *(adicione aqui um preview visual ou GIF do site)*
+📸 ![alt text](image.png)
 
 ---
 
