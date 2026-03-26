@@ -1,50 +1,66 @@
 import { useState, useEffect, useRef } from "react";
 
-// Hook de efeito typewriter
-function useTypewriter(text, { speed = 60, delay = 900 } = {}) {
-  const [displayed, setDisplayed] = useState("");
-  const [done, setDone]           = useState(false);
-  const indexRef = useRef(0);
+// Duas frases alternadas com cores distintas
+const PHRASES = [
+  { text: "Sua ideia no ar,",               color: "white"    }, // branco
+  { text: "Seu cliente pronto pra comprar.", color: "gradient" }, // azul/roxo
+];
+
+const TYPE_SPEED        = 65;
+const ERASE_SPEED       = 30;
+const PAUSE_AFTER_TYPE  = 1800;
+const PAUSE_AFTER_ERASE = 300;
+
+function useTypewriterAlternate(phrases) {
+  const [displayed, setDisplayed]   = useState("");
+  const [phraseIdx, setPhraseIdx]   = useState(0);
+  const stateRef = useRef({ index: 0, erasing: false, phrase: 0 });
+  const timerRef = useRef(null);
 
   useEffect(() => {
-    setDisplayed("");
-    setDone(false);
-    indexRef.current = 0;
+    function tick() {
+      const s    = stateRef.current;
+      const text = phrases[s.phrase].text;
 
-    const start = setTimeout(() => {
-      const interval = setInterval(() => {
-        indexRef.current += 1;
-        setDisplayed(text.slice(0, indexRef.current));
-        if (indexRef.current >= text.length) {
-          clearInterval(interval);
-          setDone(true);
+      if (!s.erasing) {
+        if (s.index < text.length) {
+          s.index += 1;
+          setDisplayed(text.slice(0, s.index));
+          timerRef.current = setTimeout(tick, TYPE_SPEED);
+        } else {
+          // terminou de digitar → pausa → começa a apagar
+          timerRef.current = setTimeout(() => {
+            s.erasing = true;
+            tick();
+          }, PAUSE_AFTER_TYPE);
         }
-      }, speed);
-      return () => clearInterval(interval);
-    }, delay);
+      } else {
+        if (s.index > 0) {
+          s.index -= 1;
+          setDisplayed(text.slice(0, s.index));
+          timerRef.current = setTimeout(tick, ERASE_SPEED);
+        } else {
+          // terminou de apagar → troca frase → pausa → começa a digitar
+          timerRef.current = setTimeout(() => {
+            s.erasing = false;
+            s.phrase  = (s.phrase + 1) % phrases.length;
+            setPhraseIdx(s.phrase);
+            tick();
+          }, PAUSE_AFTER_ERASE);
+        }
+      }
+    }
 
-    return () => clearTimeout(start);
-  }, [text, speed, delay]);
+    timerRef.current = setTimeout(tick, 700);
+    return () => clearTimeout(timerRef.current);
+  }, []); // eslint-disable-line
 
-  return { displayed, done };
+  return { displayed, phraseIdx };
 }
 
 export default function Hero() {
-  const line1 = "Sua ideia,";
-  const line2 = "convertida.";
-
-  // Linha 1 começa logo
-  const t1 = useTypewriter(line1, { speed: 70, delay: 600 });
-  // Linha 2 começa após a 1 terminar (delay = tempo da linha1 + pausa)
-  const t2 = useTypewriter(line2, {
-    speed: 70,
-    delay: 600 + line1.length * 70 + 200,
-  });
-
-  // Cursor pisca na linha ativa; some depois que linha2 termina
-  const showCursor1 = !t1.done;
-  const showCursor2 = t1.done && !t2.done;
-  const hideCursor  = t2.done;
+  const { displayed, phraseIdx } = useTypewriterAlternate(PHRASES);
+  const isGradient = PHRASES[phraseIdx].color === "gradient";
 
   return (
     <section
@@ -67,31 +83,39 @@ export default function Hero() {
         Agência Especializada em Landing Pages
       </span>
 
-      {/* Heading com typewriter */}
+      {/* Heading */}
       <h1
-        className="animate-fade-up-1 font-display font-black text-[#1a1a1a] dark:text-white
-          w-full max-w-[340px] sm:max-w-[600px] lg:max-w-[800px]
-          leading-[1.08] sm:leading-[1.04] tracking-[-0.5px] sm:tracking-[-1px]"
-        style={{ fontSize: "clamp(2.2rem, 8vw, 5.4rem)" }}
+        className="animate-fade-up-1 font-display font-black
+          w-full max-w-[340px] sm:max-w-[640px] lg:max-w-[860px]
+          leading-[1.1] sm:leading-[1.06] tracking-[-0.5px] sm:tracking-[-1px]
+          min-h-[3.5em] sm:min-h-[2.2em] flex items-center justify-center"
+        style={{ fontSize: "clamp(1.9rem, 6vw, 4.4rem)" }}
       >
-        {/* Linha 1 */}
         <span>
-          {t1.displayed}
-          {showCursor1 && <Cursor />}
-        </span>
+          {/* Texto com cor dinâmica por frase */}
+          {isGradient ? (
+            <span className="gradient-text">{displayed}</span>
+          ) : (
+            <span className="text-[#1a1a1a] dark:text-white">{displayed}</span>
+          )}
 
-        {/* Linha 2 — só renderiza quando linha 1 terminar */}
-        {t1.done && (
-          <>
-            {" "}
-            <span className="gradient-text">
-              {t2.displayed}
-              {showCursor2 && <Cursor gradient />}
-              {/* Cursor final some com fade */}
-              {hideCursor && <CursorFade gradient />}
-            </span>
-          </>
-        )}
+          {/* Cursor piscante */}
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-block",
+              width: "clamp(2px, 0.45vw, 4px)",
+              height: "0.82em",
+              marginLeft: "3px",
+              borderRadius: "2px",
+              verticalAlign: "middle",
+              background: isGradient
+                ? "linear-gradient(135deg,#667eea,#764ba2)"
+                : "currentColor",
+              animation: "blink-cursor 0.7s step-start infinite",
+            }}
+          />
+        </span>
       </h1>
 
       {/* Sub */}
@@ -125,47 +149,5 @@ export default function Hero() {
         <span>Scroll</span>
       </div>
     </section>
-  );
-}
-
-/* Cursor piscante — cor sólida (linha 1) ou gradiente (linha 2) */
-function Cursor({ gradient = false }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={{
-        display: "inline-block",
-        width: "3px",
-        marginLeft: "4px",
-        borderRadius: "2px",
-        verticalAlign: "baseline",
-        height: "0.85em",
-        background: gradient
-          ? "linear-gradient(135deg,#667eea,#764ba2)"
-          : "currentColor",
-        animation: "blink-cursor 0.75s step-start infinite",
-      }}
-    />
-  );
-}
-
-/* Cursor que aparece no fim e some com fade */
-function CursorFade({ gradient = false }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={{
-        display: "inline-block",
-        width: "3px",
-        marginLeft: "4px",
-        borderRadius: "2px",
-        verticalAlign: "baseline",
-        height: "0.85em",
-        background: gradient
-          ? "linear-gradient(135deg,#667eea,#764ba2)"
-          : "currentColor",
-        animation: "cursor-fade-out 0.8s 0.4s ease forwards",
-      }}
-    />
   );
 }
