@@ -1,58 +1,98 @@
-# 🚀 ESR Tech Inside — Landing Page Profissional
+# ESR Tech Inside — Landing Page
 
-Landing page moderna, estratégica e orientada à conversão, desenvolvida para apresentação de serviços digitais e captação de leads qualificados.
-
----
-
-## 🌐 Acesse o projeto
-
-🔗 **Deploy:** https://esrtechinside.vercel.app/
-
-📸 ![alt text](image.png)
+Projeto **React 18 + Vite + Tailwind CSS v3** com envio de formulário via **EmailJS**.
 
 ---
 
-## 💼 Sobre o projeto
+## Estrutura
 
-A **ESR Tech Inside** é uma landing page criada com foco em **performance, design moderno e geração de resultados**.
-
-O projeto foi desenvolvido para empresas e profissionais que desejam fortalecer sua presença digital e aumentar a conversão de visitantes em clientes.
-
----
-
-## ⚡ Diferenciais
-
-* 🎯 Estrutura pensada para **alta conversão**
-* 📱 Design totalmente **responsivo**
-* ⚡ Carregamento rápido (Vite)
-* 🎬 Animações suaves e modernas
-* 📩 Formulário funcional com integração via EmailJS
-* 🧩 Arquitetura escalável e organizada
-
----
-
-## 🛠️ Tecnologias utilizadas
-
-* **React 18**
-* **Vite**
-* **Tailwind CSS v3**
-* **EmailJS**
-
----
-
-## 👨‍💻 Desenvolvedor
-
-**Eduardo**
-Desenvolvedor focado em soluções modernas, automação e performance web.
-
-📩 eduardosantosrodrigues.10@gmail.com
-
-🔗 https://www.linkedin.com/in/eduardo-rodrigues-431127380/
+```
+esr-tech-inside/
+├── index.html                  ← Entry point (Vite)
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+├── package.json
+├── .env                        ← Credenciais EmailJS (não commitar!)
+├── .gitignore
+└── src/
+    ├── main.jsx                ← Entry React
+    ├── App.jsx
+    ├── index.css               ← Tailwind + CSS variables (shadcn/ui)
+    └── components/
+        ├── Navbar.jsx
+        ├── Hero.jsx
+        ├── Reveal.jsx          ← Hook de animação scroll
+        ├── Sobre.jsx
+        ├── Servicos.jsx
+        ├── Processo.jsx
+        ├── Nichos.jsx
+        ├── CtaBanner.jsx
+        ├── Contato.jsx         ← Formulário com EmailJS
+        └── Footer.jsx
+```
 
 ---
 
-## 🤝 Contratação
+## Como rodar
 
-Se você busca uma landing page profissional, moderna e focada em resultados:
+```bash
+# 1. Instalar dependências
+npm install
 
-📬 Entre em contato para projetos e parcerias.
+# 2. Rodar em desenvolvimento
+npm run dev
+
+# 3. Build de produção
+npm run build
+
+# 4. Preview da build
+npm run preview
+```
+
+---
+
+## EmailJS — Configuração do Template
+
+No painel do EmailJS (https://dashboard.emailjs.com), abra seu template `template_67iy27l` e configure as variáveis para corresponder aos campos do formulário:
+
+| Variável no template | Campo do formulário |
+|----------------------|---------------------|
+| `{{from_name}}`      | Nome completo       |
+| `{{from_email}}`     | E-mail do remetente |
+| `{{subject}}`        | Assunto             |
+| `{{message}}`        | Mensagem            |
+
+Exemplo de corpo do template:
+```
+Novo contato via ESR Tech Inside!
+
+Nome: {{from_name}}
+E-mail: {{from_email}}
+Assunto: {{subject}}
+
+Mensagem:
+{{message}}
+```
+
+---
+
+## Variáveis de ambiente (.env)
+
+```env
+VITE_EMAILJS_SERVICE_ID=service_w3l7125
+VITE_EMAILJS_TEMPLATE_ID=template_67iy27l
+VITE_EMAILJS_PUBLIC_KEY=2bt5FwgF5BAMCZl-g
+```
+
+> ⚠️ O arquivo `.env` está no `.gitignore` — nunca o commite no repositório.
+
+---
+
+## Tecnologias
+
+- [Vite 5](https://vitejs.dev/)
+- [React 18](https://react.dev/)
+- [Tailwind CSS 3](https://tailwindcss.com/)
+- [EmailJS](https://www.emailjs.com/)
+- Fontes: **Playfair Display** + **Outfit** (Google Fonts)

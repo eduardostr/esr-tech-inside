@@ -181,6 +181,16 @@ code {
 .animate-pulse-dot     { animation: pulse-dot 2s infinite; }
 .animate-heartbeat     { animation: heartbeat 1.5s ease infinite; }
 
+/* Typewriter cursor */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes cursor-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 /* WhatsApp widget popup animation */
 @keyframes fadeUpPop {
   from { opacity: 0; transform: translateY(12px) scale(0.97); }

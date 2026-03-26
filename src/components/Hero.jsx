@@ -1,4 +1,51 @@
+import { useState, useEffect, useRef } from "react";
+
+// Hook de efeito typewriter
+function useTypewriter(text, { speed = 60, delay = 900 } = {}) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone]           = useState(false);
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    setDisplayed("");
+    setDone(false);
+    indexRef.current = 0;
+
+    const start = setTimeout(() => {
+      const interval = setInterval(() => {
+        indexRef.current += 1;
+        setDisplayed(text.slice(0, indexRef.current));
+        if (indexRef.current >= text.length) {
+          clearInterval(interval);
+          setDone(true);
+        }
+      }, speed);
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => clearTimeout(start);
+  }, [text, speed, delay]);
+
+  return { displayed, done };
+}
+
 export default function Hero() {
+  const line1 = "Sua ideia,";
+  const line2 = "convertida.";
+
+  // Linha 1 começa logo
+  const t1 = useTypewriter(line1, { speed: 70, delay: 600 });
+  // Linha 2 começa após a 1 terminar (delay = tempo da linha1 + pausa)
+  const t2 = useTypewriter(line2, {
+    speed: 70,
+    delay: 600 + line1.length * 70 + 200,
+  });
+
+  // Cursor pisca na linha ativa; some depois que linha2 termina
+  const showCursor1 = !t1.done;
+  const showCursor2 = t1.done && !t2.done;
+  const hideCursor  = t2.done;
+
   return (
     <section
       id="inicio"
@@ -20,13 +67,31 @@ export default function Hero() {
         Agência Especializada em Landing Pages
       </span>
 
-      {/* Heading */}
-      <h1 className="animate-fade-up-1 font-display font-black text-[#1a1a1a] dark:text-white
-        w-full max-w-[340px] sm:max-w-[600px] lg:max-w-[800px]
-        leading-[1.08] sm:leading-[1.04] tracking-[-0.5px] sm:tracking-[-1px]"
-        style={{ fontSize: "clamp(2.2rem, 8vw, 5.4rem)" }}>
-        Sua ideia,{" "}
-        <span className="gradient-text">convertida.</span>
+      {/* Heading com typewriter */}
+      <h1
+        className="animate-fade-up-1 font-display font-black text-[#1a1a1a] dark:text-white
+          w-full max-w-[340px] sm:max-w-[600px] lg:max-w-[800px]
+          leading-[1.08] sm:leading-[1.04] tracking-[-0.5px] sm:tracking-[-1px]"
+        style={{ fontSize: "clamp(2.2rem, 8vw, 5.4rem)" }}
+      >
+        {/* Linha 1 */}
+        <span>
+          {t1.displayed}
+          {showCursor1 && <Cursor />}
+        </span>
+
+        {/* Linha 2 — só renderiza quando linha 1 terminar */}
+        {t1.done && (
+          <>
+            {" "}
+            <span className="gradient-text">
+              {t2.displayed}
+              {showCursor2 && <Cursor gradient />}
+              {/* Cursor final some com fade */}
+              {hideCursor && <CursorFade gradient />}
+            </span>
+          </>
+        )}
       </h1>
 
       {/* Sub */}
@@ -52,7 +117,7 @@ export default function Hero() {
         </a>
       </div>
 
-      {/* Scroll hint — hide on very small screens */}
+      {/* Scroll hint */}
       <div className="animate-fade-up-6 hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-[0.72rem] uppercase tracking-[1.5px] text-[#1a1a1a]/40 dark:text-white/40">
         <div className="relative w-px h-10 bg-[#1a1a1a]/25 dark:bg-white/20 overflow-hidden">
           <span className="absolute left-0 w-full h-full bg-esr-primary" style={{ animation: "scroll-line 2s 1s infinite" }} />
@@ -60,5 +125,47 @@ export default function Hero() {
         <span>Scroll</span>
       </div>
     </section>
+  );
+}
+
+/* Cursor piscante — cor sólida (linha 1) ou gradiente (linha 2) */
+function Cursor({ gradient = false }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        display: "inline-block",
+        width: "3px",
+        marginLeft: "4px",
+        borderRadius: "2px",
+        verticalAlign: "baseline",
+        height: "0.85em",
+        background: gradient
+          ? "linear-gradient(135deg,#667eea,#764ba2)"
+          : "currentColor",
+        animation: "blink-cursor 0.75s step-start infinite",
+      }}
+    />
+  );
+}
+
+/* Cursor que aparece no fim e some com fade */
+function CursorFade({ gradient = false }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        display: "inline-block",
+        width: "3px",
+        marginLeft: "4px",
+        borderRadius: "2px",
+        verticalAlign: "baseline",
+        height: "0.85em",
+        background: gradient
+          ? "linear-gradient(135deg,#667eea,#764ba2)"
+          : "currentColor",
+        animation: "cursor-fade-out 0.8s 0.4s ease forwards",
+      }}
+    />
   );
 }
