@@ -54,7 +54,7 @@ npm run preview
 
 ## EmailJS — Configuração do Template
 
-No painel do EmailJS (https://dashboard.emailjs.com), abra seu template `template_67iy27l` e configure as variáveis para corresponder aos campos do formulário:
+No painel do EmailJS (https://dashboard.emailjs.com), abra seu template `template_(seutemplateaqui)` e configure as variáveis para corresponder aos campos do formulário:
 
 | Variável no template | Campo do formulário |
 |----------------------|---------------------|
@@ -80,9 +80,9 @@ Mensagem:
 ## Variáveis de ambiente (.env)
 
 ```env
-VITE_EMAILJS_SERVICE_ID=service_w3l7125
-VITE_EMAILJS_TEMPLATE_ID=template_67iy27l
-VITE_EMAILJS_PUBLIC_KEY=2bt5FwgF5BAMCZl-g
+VITE_EMAILJS_SERVICE_ID=service_example
+VITE_EMAILJS_TEMPLATE_ID=template_example
+VITE_EMAILJS_PUBLIC_KEY=example
 ```
 
 > ⚠️ O arquivo `.env` está no `.gitignore` — nunca o commite no repositório.
