@@ -66,7 +66,7 @@ export default function Hero() {
     <section
       id="inicio"
       className="relative min-h-screen flex flex-col items-center justify-center text-center
-        px-4 sm:px-8 lg:px-[6vw] pt-[80px] sm:pt-[100px] pb-[80px] overflow-hidden bg-white dark:bg-[#0a0a0a]"
+        px-4 sm:px-8 lg:px-[6vw] pt-[88px] sm:pt-[108px] pb-[80px] overflow-hidden bg-white dark:bg-[#0a0a0a]"
     >
       <div className="pointer-events-none absolute inset-0" style={{
         background: "radial-gradient(ellipse 60% 50% at 50% -10%, rgba(102,126,234,.18) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 90% 80%, rgba(118,75,162,.14) 0%, transparent 60%)",

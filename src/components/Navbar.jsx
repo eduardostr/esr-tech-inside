@@ -27,6 +27,7 @@ function ThemeToggle() {
 }
 
 export default function Navbar() {
+  const { dark } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,7 +37,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Fecha menu ao redimensionar para desktop
   useEffect(() => {
     const onResize = () => { if (window.innerWidth >= 768) setMenuOpen(false); };
     window.addEventListener("resize", onResize);
@@ -47,15 +47,18 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between
-        px-4 sm:px-6 lg:px-[6vw] h-[60px] sm:h-[68px]
+        px-4 sm:px-6 lg:px-[6vw] h-[72px] sm:h-[84px]
         bg-white/92 dark:bg-[#0a0a0a]/92 backdrop-blur-md
         border-b border-esr-primary/10 transition-shadow duration-300
         ${scrolled ? "shadow-esr-sm" : ""}`}>
 
-      {/* Logo */}
-      <a href="#inicio" className="flex items-center gap-2 font-display font-bold text-[1rem] sm:text-[1.15rem] text-[#1a1a1a] dark:text-white no-underline">
-        <span className="w-2 h-2 rounded-full bg-esr-gradient inline-block flex-shrink-0" />
-        ESR Tech Inside
+      {/* Logo — troca conforme o tema */}
+      <a href="#inicio" className="flex items-center no-underline">
+        <img
+          src={dark ? "/logo-esr-dark.png" : "/logo-esr-light.png"}
+          alt="ESR Tech Inside"
+          className="h-[60px] sm:h-[72px] w-auto object-contain transition-all duration-300 hover:opacity-85"
+        />
       </a>
 
       {/* Desktop links */}
@@ -93,7 +96,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`md:hidden absolute top-[60px] sm:top-[68px] left-0 right-0
+      <div className={`md:hidden absolute top-[72px] sm:top-[84px] left-0 right-0
         bg-white dark:bg-[#111] border-b border-esr-primary/10 shadow-lg
         px-4 sm:px-6 flex flex-col gap-0 overflow-hidden transition-all duration-300
         ${menuOpen ? "max-h-[400px] py-4" : "max-h-0 py-0"}`}>
