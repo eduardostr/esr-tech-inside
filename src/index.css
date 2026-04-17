@@ -197,6 +197,44 @@ code {
   to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
+/* ── Section backgrounds (responds to dark/light mode) ── */
+.bg-section-hero {
+  background: linear-gradient(135deg, #f4f7ff 0%, #eef2ff 55%, #e4ecff 100%);
+}
+.dark .bg-section-hero {
+  background: linear-gradient(135deg, #060d1f 0%, #0a1628 55%, #0d1f3c 100%);
+}
+.bg-section-servicos {
+  background: linear-gradient(180deg, #e4ecff 0%, #eef2ff 50%, #f4f7ff 100%);
+}
+.dark .bg-section-servicos {
+  background: linear-gradient(180deg, #0d1f3c 0%, #0a1628 50%, #080d1a 100%);
+}
+.bg-section-projetos {
+  background: linear-gradient(180deg, #f4f7ff 0%, #eef2ff 100%);
+}
+.dark .bg-section-projetos {
+  background: linear-gradient(180deg, #080d1a 0%, #0a1628 100%);
+}
+.bg-section-sobre {
+  background: linear-gradient(180deg, #eef2ff 0%, #f4f7ff 100%);
+}
+.dark .bg-section-sobre {
+  background: linear-gradient(180deg, #0a1628 0%, #080d1a 100%);
+}
+.bg-section-contato {
+  background: linear-gradient(180deg, #f4f7ff 0%, #f8faff 100%);
+}
+.dark .bg-section-contato {
+  background: linear-gradient(180deg, #080d1a 0%, #060d1f 100%);
+}
+.bg-section-footer {
+  background: #f0f4ff;
+}
+.dark .bg-section-footer {
+  background: #060d1f;
+}
+
 /* Safe area support for notched/gesture-bar devices */
 @supports (padding: max(0px)) {
   .safe-bottom {

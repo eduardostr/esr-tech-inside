@@ -1,153 +1,162 @@
-import { useState, useEffect, useRef } from "react";
+function HeroIllustration() {
+  return (
+    <div className="relative w-full max-w-[500px] aspect-square select-none">
+      {/* Ambient glow */}
+      <div
+        className="absolute inset-0 rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle at 50% 50%, rgba(102,126,234,0.22) 0%, transparent 68%)" }}
+      />
 
-// Duas frases alternadas com cores distintas
-const PHRASES = [
-  { text: "Sua ideia no ar,",               color: "white"    }, // branco
-  { text: "Seu cliente pronto pra comprar.", color: "gradient" }, // azul/roxo
-];
+      <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+        <defs>
+          <radialGradient id="hSphereG" cx="38%" cy="32%" r="62%">
+            <stop offset="0%" stopColor="#a78bfa" />
+            <stop offset="45%" stopColor="#667eea" />
+            <stop offset="100%" stopColor="#1a2d6b" />
+          </radialGradient>
+          <radialGradient id="hGlowG" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#667eea" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#667eea" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="hCard1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1c2b54" />
+            <stop offset="100%" stopColor="#0e1830" />
+          </linearGradient>
+          <linearGradient id="hCard2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#221447" />
+            <stop offset="100%" stopColor="#0e1830" />
+          </linearGradient>
+          <filter id="hBlur"><feGaussianBlur stdDeviation="10" /></filter>
+          <filter id="hBlur2"><feGaussianBlur stdDeviation="3" /></filter>
+        </defs>
 
-const TYPE_SPEED        = 65;
-const ERASE_SPEED       = 30;
-const PAUSE_AFTER_TYPE  = 1800;
-const PAUSE_AFTER_ERASE = 300;
+        {/* Background glow blob */}
+        <ellipse cx="250" cy="270" rx="190" ry="155" fill="url(#hGlowG)" filter="url(#hBlur)" />
 
-function useTypewriterAlternate(phrases) {
-  const [displayed, setDisplayed]   = useState("");
-  const [phraseIdx, setPhraseIdx]   = useState(0);
-  const stateRef = useRef({ index: 0, erasing: false, phrase: 0 });
-  const timerRef = useRef(null);
+        {/* Orbital ring – flat ellipse */}
+        <ellipse cx="250" cy="255" rx="175" ry="58" stroke="#667eea" strokeOpacity="0.18" strokeWidth="1.5" fill="none" />
+        {/* Orbital ring – circle dashed */}
+        <circle cx="250" cy="250" r="138" stroke="#667eea" strokeOpacity="0.12" strokeWidth="1" fill="none" strokeDasharray="4 7" />
 
-  useEffect(() => {
-    function tick() {
-      const s    = stateRef.current;
-      const text = phrases[s.phrase].text;
+        {/* Main sphere */}
+        <circle cx="250" cy="230" r="108" fill="url(#hSphereG)" />
+        <circle cx="250" cy="230" r="108" fill="none" stroke="#667eea" strokeOpacity="0.35" strokeWidth="1.5" />
 
-      if (!s.erasing) {
-        if (s.index < text.length) {
-          s.index += 1;
-          setDisplayed(text.slice(0, s.index));
-          timerRef.current = setTimeout(tick, TYPE_SPEED);
-        } else {
-          // terminou de digitar → pausa → começa a apagar
-          timerRef.current = setTimeout(() => {
-            s.erasing = true;
-            tick();
-          }, PAUSE_AFTER_TYPE);
-        }
-      } else {
-        if (s.index > 0) {
-          s.index -= 1;
-          setDisplayed(text.slice(0, s.index));
-          timerRef.current = setTimeout(tick, ERASE_SPEED);
-        } else {
-          // terminou de apagar → troca frase → pausa → começa a digitar
-          timerRef.current = setTimeout(() => {
-            s.erasing = false;
-            s.phrase  = (s.phrase + 1) % phrases.length;
-            setPhraseIdx(s.phrase);
-            tick();
-          }, PAUSE_AFTER_ERASE);
-        }
-      }
-    }
+        {/* Sphere shine */}
+        <ellipse cx="222" cy="192" rx="42" ry="28" fill="white" fillOpacity="0.08" />
 
-    timerRef.current = setTimeout(tick, 700);
-    return () => clearTimeout(timerRef.current);
-  }, []); // eslint-disable-line
+        {/* Cloud shape inside sphere */}
+        <path
+          d="M200 225 Q210 210 226 215 Q231 200 250 203 Q268 196 272 211
+             Q288 208 291 224 Q295 237 280 242 L205 242 Q193 242 200 225Z"
+          fill="white" fillOpacity="0.14"
+        />
 
-  return { displayed, phraseIdx };
+        {/* Floating card — top left */}
+        <rect x="48" y="105" width="118" height="72" rx="12" fill="url(#hCard1)" stroke="#667eea" strokeOpacity="0.28" strokeWidth="1" />
+        <rect x="60" y="117" width="32" height="18" rx="4" fill="#667eea" fillOpacity="0.55" />
+        <rect x="60" y="141" width="94" height="4" rx="2" fill="#667eea" fillOpacity="0.22" />
+        <rect x="60" y="149" width="66" height="4" rx="2" fill="#667eea" fillOpacity="0.14" />
+        <circle cx="148" cy="118" r="7" fill="#a78bfa" fillOpacity="0.5" />
+
+        {/* Floating card — right */}
+        <rect x="365" y="148" width="108" height="68" rx="12" fill="url(#hCard1)" stroke="#667eea" strokeOpacity="0.22" strokeWidth="1" />
+        <circle cx="385" cy="168" r="10" fill="#667eea" fillOpacity="0.45" />
+        <rect x="401" y="162" width="58" height="5" rx="2" fill="#667eea" fillOpacity="0.28" />
+        <rect x="401" y="171" width="40" height="4" rx="2" fill="#667eea" fillOpacity="0.18" />
+        <rect x="377" y="183" width="84" height="4" rx="2" fill="#667eea" fillOpacity="0.18" />
+        <rect x="377" y="191" width="58" height="4" rx="2" fill="#667eea" fillOpacity="0.1" />
+
+        {/* Floating card — bottom right */}
+        <rect x="332" y="328" width="126" height="76" rx="12" fill="url(#hCard2)" stroke="#764ba2" strokeOpacity="0.28" strokeWidth="1" />
+        <rect x="344" y="340" width="38" height="20" rx="4" fill="#764ba2" fillOpacity="0.55" />
+        <rect x="344" y="366" width="102" height="4" rx="2" fill="#764ba2" fillOpacity="0.22" />
+        <rect x="344" y="374" width="74" height="4" rx="2" fill="#764ba2" fillOpacity="0.14" />
+
+        {/* Connector lines */}
+        <line x1="166" y1="148" x2="202" y2="200" stroke="#667eea" strokeOpacity="0.22" strokeWidth="1" strokeDasharray="3 5" />
+        <line x1="365" y1="183" x2="342" y2="228" stroke="#667eea" strokeOpacity="0.18" strokeWidth="1" strokeDasharray="3 5" />
+        <line x1="358" y1="340" x2="325" y2="308" stroke="#764ba2" strokeOpacity="0.2" strokeWidth="1" strokeDasharray="3 5" />
+
+        {/* Floating dots */}
+        <circle cx="118" cy="295" r="5" fill="#667eea" fillOpacity="0.65" />
+        <circle cx="128" cy="306" r="3" fill="#667eea" fillOpacity="0.3" />
+        <circle cx="408" cy="272" r="4" fill="#764ba2" fillOpacity="0.55" />
+        <circle cx="162" cy="378" r="3" fill="#667eea" fillOpacity="0.4" />
+        <circle cx="308" cy="418" r="5" fill="#667eea" fillOpacity="0.3" />
+        <circle cx="72" cy="222" r="3" fill="#667eea" fillOpacity="0.45" />
+
+        {/* Orbit dots */}
+        <circle cx="80" cy="255" r="6" fill="#667eea" fillOpacity="0.85" filter="url(#hBlur2)" />
+        <circle cx="80" cy="255" r="3.5" fill="#667eea" />
+        <circle cx="420" cy="255" r="5" fill="#a78bfa" fillOpacity="0.8" filter="url(#hBlur2)" />
+        <circle cx="420" cy="255" r="3" fill="#a78bfa" />
+      </svg>
+    </div>
+  );
 }
 
 export default function Hero() {
-  const { displayed, phraseIdx } = useTypewriterAlternate(PHRASES);
-  const isGradient = PHRASES[phraseIdx].color === "gradient";
-
   return (
     <section
       id="inicio"
-      className="relative min-h-screen flex flex-col items-center justify-center text-center
-        px-4 sm:px-8 lg:px-[6vw] pt-[88px] sm:pt-[108px] pb-[80px] overflow-hidden bg-white dark:bg-[#0a0a0a]"
+      className="relative min-h-screen flex items-center overflow-hidden bg-section-hero
+        px-6 sm:px-10 lg:px-[8vw] pt-[84px] sm:pt-[100px] pb-16"
     >
-      <div className="pointer-events-none absolute inset-0" style={{
-        background: "radial-gradient(ellipse 60% 50% at 50% -10%, rgba(102,126,234,.18) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 90% 80%, rgba(118,75,162,.14) 0%, transparent 60%)",
-      }} />
-
-      {/* Badge */}
-      <span className="animate-fade-up relative inline-flex items-center gap-2
-        bg-esr-primary/[.08] dark:bg-esr-primary/[.15]
-        border border-esr-primary/20 dark:border-esr-primary/40
-        rounded-full px-3 sm:px-[18px] py-[6px] sm:py-[7px]
-        text-[0.68rem] sm:text-[0.78rem] font-semibold text-esr-primary
-        uppercase tracking-[0.5px] mb-5 sm:mb-7 text-center max-w-[90vw]">
-        <span className="animate-pulse-dot w-[6px] h-[6px] rounded-full bg-esr-primary inline-block flex-shrink-0" />
-        Agência Especializada em Landing Pages
-      </span>
-
-      {/* Heading */}
-      <h1
-        className="animate-fade-up-1 font-display font-black
-          w-full max-w-[340px] sm:max-w-[640px] lg:max-w-[860px]
-          leading-[1.1] sm:leading-[1.06] tracking-[-0.5px] sm:tracking-[-1px]
-          min-h-[3.5em] sm:min-h-[2.2em] flex items-center justify-center"
-        style={{ fontSize: "clamp(1.9rem, 6vw, 4.4rem)" }}
-      >
-        <span>
-          {/* Texto com cor dinâmica por frase */}
-          {isGradient ? (
-            <span className="gradient-text">{displayed}</span>
-          ) : (
-            <span className="text-[#1a1a1a] dark:text-white">{displayed}</span>
-          )}
-
-          {/* Cursor piscante */}
-          <span
-            aria-hidden="true"
-            style={{
-              display: "inline-block",
-              width: "clamp(2px, 0.45vw, 4px)",
-              height: "0.82em",
-              marginLeft: "3px",
-              borderRadius: "2px",
-              verticalAlign: "middle",
-              background: isGradient
-                ? "linear-gradient(135deg,#667eea,#764ba2)"
-                : "currentColor",
-              animation: "blink-cursor 0.7s step-start infinite",
-            }}
-          />
-        </span>
-      </h1>
-
-      {/* Sub */}
-      <p className="animate-fade-up-2 mt-4 sm:mt-6 font-body font-light text-[#444] dark:text-[#b0b0b0]
-        max-w-[320px] sm:max-w-[500px] leading-[1.7] text-[0.95rem] sm:text-[1.05rem]">
-        Criamos landing pages que transformam visitantes em clientes — para qualquer nicho, com design que vende.
-      </p>
-
-      {/* CTAs */}
-      <div className="animate-fade-up-3 mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full max-w-[320px] sm:max-w-none justify-center">
-        <a href="#contato"
-          className="w-full sm:w-auto font-display font-bold text-[0.9rem] sm:text-[0.95rem] text-white bg-esr-gradient
-            px-8 sm:px-9 py-4 sm:py-[15px] rounded-full no-underline shadow-esr-md text-center
-            hover:-translate-y-0.5 hover:shadow-esr-lg transition-all duration-200">
-          Quero minha Landing Page
-        </a>
-        <a href="#servicos"
-          className="w-full sm:w-auto font-display font-semibold text-[0.9rem] sm:text-[0.95rem] text-[#1a1a1a] dark:text-white
-            border border-[#1a1a1a]/20 dark:border-white/25
-            px-8 sm:px-9 py-4 sm:py-[15px] rounded-full no-underline text-center
-            hover:border-esr-primary hover:text-esr-primary transition-all duration-200">
-          Ver serviços
-        </a>
+      {/* Background ambient blobs */}
+      <div className="pointer-events-none absolute inset-0">
+        <div style={{ position: "absolute", top: "15%", left: "25%", width: "520px", height: "520px", background: "radial-gradient(circle, rgba(102,126,234,0.13) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: "5%", right: "15%", width: "360px", height: "360px", background: "radial-gradient(circle, rgba(118,75,162,0.1) 0%, transparent 70%)", borderRadius: "50%" }} />
       </div>
 
-      {/* Scroll hint */}
-      <div className="animate-fade-up-6 hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-[0.72rem] uppercase tracking-[1.5px] text-[#1a1a1a]/40 dark:text-white/40">
-        <div className="relative w-px h-10 bg-[#1a1a1a]/25 dark:bg-white/20 overflow-hidden">
-          <span className="absolute left-0 w-full h-full bg-esr-primary" style={{ animation: "scroll-line 2s 1s infinite" }} />
+      {/* Main grid */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+        {/* ── Left: copy ── */}
+        <div className="flex flex-col items-start">
+
+          {/* Heading */}
+          <h1
+            className="animate-fade-up-1 font-display font-black text-gray-900 dark:text-white leading-[1.1] tracking-tight mb-6"
+            style={{ fontSize: "clamp(2.1rem, 4.8vw, 3.8rem)" }}
+          >
+            Criando soluções que{" "}
+            <span className="gradient-text">transformam negócios</span>
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            className="animate-fade-up-2 font-body text-gray-500 dark:text-[#8a9ab8] leading-relaxed mb-8 max-w-[480px]"
+            style={{ fontSize: "clamp(0.88rem, 1.4vw, 1.02rem)" }}
+          >
+            Aprimore sua presença digital com sites, sistemas e automações
+            modernas, rápidas e focadas em resultado.
+          </p>
+
+          {/* CTAs */}
+          <div className="animate-fade-up-3 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <a
+              href="#contato"
+              className="inline-flex items-center justify-center gap-2 font-display font-bold text-white
+                bg-esr-gradient px-8 py-4 rounded-xl no-underline shadow-esr-md
+                hover:-translate-y-0.5 hover:shadow-esr-lg transition-all duration-200 text-[0.9rem]"
+            >
+              {/* WhatsApp icon */}
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 flex-shrink-0">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              Falar no WhatsApp
+            </a>
+
+          </div>
         </div>
-        <span>Scroll</span>
+
+        {/* ── Right: illustration ── */}
+        <div className="animate-fade-up-2 flex items-center justify-center">
+          <HeroIllustration />
+        </div>
       </div>
+
     </section>
   );
 }
