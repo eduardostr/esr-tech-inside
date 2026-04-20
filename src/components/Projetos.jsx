@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Reveal } from "./Reveal";
 import { useTheme } from "../ThemeContext";
 
@@ -8,9 +8,30 @@ const projects = [
     category: "Site Institucional",
     desc: "Site para empresa de limpeza e descartáveis com foco em qualidade, variedade e o melhor atendimento da região.",
     url: "https://embalimplf.com/",
-    preview: <img src="/Shot_Embalimp.png" alt="EmbaLimp" className="w-full h-full object-cover object-top" />,
+    preview: (
+      <>
+        <img src="/Shot_Embalimp.png"        alt="EmbaLimp" className="hidden sm:block w-full h-full object-cover object-top" />
+        <img src="/Shot_Embalimp_Mobile.png" alt="EmbaLimp" className="block sm:hidden w-full h-full object-cover object-top" />
+      </>
+    ),
     detalhes: {
       sobre: "A loja é especializada na venda de produtos de limpeza, descartáveis e embalagens, atendendo tanto clientes finais quanto principalmente empresas e comércios.",
+      tecnologias: ["HTML", "CSS", "Tailwind", "JavaScript", "React"],
+    },
+  },
+  {
+    title: "Café Delícia Creme",
+    category: "Site Institucional",
+    desc: "Site para cafeteria artesanal com foco em apresentar o cardápio, ambiente acolhedor e facilitar o contato com os clientes.",
+    url: "https://cafedeliciacreme.vercel.app/",
+    preview: (
+      <>
+        <img src="/Shot_CaféDeliciaCreme.png"        alt="Café Delícia Creme" className="hidden sm:block w-full h-full object-cover object-top" />
+        <img src="/Shot_CaféDeliciaCreme_Mobile.png" alt="Café Delícia Creme" className="block sm:hidden w-full h-full object-cover object-top" />
+      </>
+    ),
+    detalhes: {
+      sobre: "O Café Delícia Creme nasceu da dedicação de Rosi Dantas com a proposta de oferecer cafés gourmet de forma prática e moderna. Atuando no modelo de entregas sob encomenda, a marca se destaca em Lauro de Freitas pela qualidade, conveniência e experiência única em cada pedido.",
       tecnologias: ["HTML", "CSS", "Tailwind", "JavaScript", "React"],
     },
   },
@@ -22,13 +43,14 @@ function Arrow({ dir, onClick, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer flex-shrink-0
+      className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full border flex items-center justify-center
+        transition-all duration-200 cursor-pointer flex-shrink-0
         ${disabled
           ? "border-white/10 text-white/20 cursor-not-allowed"
-          : "border-white/20 text-white/70 hover:border-[#667eea]/60 hover:text-[#667eea] hover:bg-[#667eea]/10"
+          : "border-white/30 text-white/80 bg-black/30 backdrop-blur-sm hover:border-[#667eea]/60 hover:text-[#667eea] hover:bg-[#667eea]/10 hover:scale-110 active:scale-95"
         }`}
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 sm:w-4 sm:h-4">
         {dir === "left"
           ? <path d="M15 18l-6-6 6-6" />
           : <path d="M9 18l6-6-6-6" />}
@@ -42,10 +64,32 @@ function Arrow({ dir, onClick, disabled }) {
 export default function Projetos() {
   const { dark } = useTheme();
   const [current, setCurrent] = useState(0);
-  const [modal, setModal] = useState(null); // project object or null
+  const [modal, setModal] = useState(null);
+  const prevRef = useRef(0);
+  const touchStartX = useRef(0);
 
-  const prev = () => setCurrent(i => Math.max(0, i - 1));
-  const next = () => setCurrent(i => Math.min(projects.length - 1, i + 1));
+  const navigate = (dir) => {
+    prevRef.current = current;
+    setCurrent(i => dir === "right"
+      ? Math.min(projects.length - 1, i + 1)
+      : Math.max(0, i - 1)
+    );
+  };
+
+  const goTo = (i) => {
+    if (i === current) return;
+    prevRef.current = current;
+    setCurrent(i);
+  };
+
+  const prev = () => navigate("left");
+  const next = () => navigate("right");
+
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 40) dx < 0 ? next() : prev();
+  };
 
   return (
     <section
@@ -54,7 +98,7 @@ export default function Projetos() {
     >
       {/* Header */}
       <Reveal>
-        <div className="text-center mb-12 sm:mb-16">
+        <div className="text-center mb-10 sm:mb-14 lg:mb-16">
           <h2
             className="font-display font-black text-gray-900 dark:text-white leading-[1.12] tracking-tight"
             style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)" }}
@@ -68,46 +112,84 @@ export default function Projetos() {
         </div>
       </Reveal>
 
-      {/* Cards */}
+      {/* Carousel */}
       <Reveal delay={0.1}>
-        <div className="flex flex-col items-center gap-6 max-w-[778px] mx-auto">
+        <div className="flex flex-col items-center gap-5 sm:gap-6 overflow-x-hidden">
 
-          {/* Card */}
-          {projects.map((p, i) => {
-            if (i !== current) return null;
-            return (
-              <div
-                key={p.title}
-                className="w-full rounded-2xl overflow-hidden border border-[#667eea]/35 shadow-2xl
-                  transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(102,126,234,0.2)]"
-                style={{ background: dark ? "linear-gradient(160deg,#0d1f3c,#060d1f)" : "#ffffff" }}
-              >
-                <div className="w-full aspect-[778/448] overflow-hidden">
-                  {p.preview}
-                </div>
-              </div>
-            );
-          })}
+          {/* Setas fora do card, em linha */}
+          <div
+            className="flex items-center gap-2 sm:gap-4 lg:gap-5 w-full justify-center overflow-x-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Seta esquerda */}
+            <div className="flex-shrink-0">
+              {projects.length > 1
+                ? <Arrow dir="left" onClick={prev} disabled={current === 0} />
+                : <div className="w-9 sm:w-11" />}
+            </div>
 
-          {/* Buttons — abaixo do card */}
-          <div className="flex items-center gap-3">
+            {/* Track */}
+            <div className="relative flex-1 max-w-[860px] aspect-[9/16] sm:aspect-[1920/905] rounded-2xl overflow-hidden">
+              {projects.map((p, i) => {
+                const isActive = i === current;
+                const wasActive = prevRef.current === i;
+                if (!isActive && !wasActive) return null;
+
+                return (
+                  <div
+                    key={p.title}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      transition: "opacity 480ms ease",
+                      opacity: isActive ? 1 : 0,
+                      pointerEvents: isActive ? "auto" : "none",
+                      zIndex: isActive ? 2 : 1,
+                    }}
+                  >
+                    <div
+                      className="w-full h-full border border-[#667eea]/35 shadow-2xl"
+                      style={{ background: dark ? "linear-gradient(160deg,#0d1f3c,#060d1f)" : "#ffffff" }}
+                    >
+                      <div className="w-full h-full">{p.preview}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Seta direita */}
+            <div className="flex-shrink-0">
+              {projects.length > 1
+                ? <Arrow dir="right" onClick={next} disabled={current === projects.length - 1} />
+                : <div className="w-9 sm:w-11" />}
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => setModal(projects[current])}
               className="font-display font-semibold text-sm text-white bg-esr-gradient
                 px-6 py-3 rounded-xl border-none cursor-pointer shadow-esr-sm
                 hover:-translate-y-1 hover:scale-[1.04] hover:shadow-esr-md
                 active:translate-y-0 active:scale-100
-                transition-all duration-200">
+                transition-all duration-200"
+            >
               Ver detalhes
             </button>
-            <a href={projects[current]?.url || "#contato"}
-              target={projects[current]?.url ? "_blank" : "_self"} rel="noreferrer"
+            <a
+              href={projects[current]?.url || "#contato"}
+              target={projects[current]?.url ? "_blank" : "_self"}
+              rel="noreferrer"
               className="inline-flex items-center gap-1.5 font-display font-semibold text-sm text-gray-500 dark:text-[#8a9ab8]
                 border border-gray-200 dark:border-white/15 px-6 py-3 rounded-xl no-underline
                 hover:border-[#667eea]/50 hover:text-[#667eea] hover:-translate-y-1 hover:scale-[1.04]
                 hover:shadow-[0_4px_14px_rgba(102,126,234,0.15)]
                 active:translate-y-0 active:scale-100
-                transition-all duration-200">
+                transition-all duration-200"
+            >
               Ver site
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5">
                 <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
@@ -115,19 +197,6 @@ export default function Projetos() {
             </a>
           </div>
 
-          {/* Dots — visível quando houver mais projetos */}
-          {projects.length > 1 && (
-            <div className="flex justify-center gap-2">
-              {projects.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrent(i)}
-                  className={`rounded-full transition-all duration-200 cursor-pointer border-none
-                    ${i === current ? "w-6 h-2 bg-[#667eea]" : "w-2 h-2 bg-white/20 hover:bg-white/40"}`}
-                />
-              ))}
-            </div>
-          )}
         </div>
       </Reveal>
 
@@ -143,15 +212,17 @@ export default function Projetos() {
             style={{
               background: dark ? "linear-gradient(160deg,#0d1f3c,#060d1f)" : "#ffffff",
               borderColor: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+              maxHeight: "90dvh",
             }}
             onClick={e => e.stopPropagation()}
           >
             {/* Close */}
             <button
               onClick={() => setModal(null)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 rounded-full flex items-center justify-center
                 transition-all duration-200 cursor-pointer z-10
-                bg-gray-100 dark:bg-white/15 text-gray-500 dark:text-white/80 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/25
+                bg-gray-100 dark:bg-white/15 text-gray-500 dark:text-white/80
+                hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/25
                 border border-gray-200 dark:border-white/20"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
@@ -159,17 +230,15 @@ export default function Projetos() {
               </svg>
             </button>
 
-            {/* Content */}
-            <div className="p-8 flex flex-col gap-6">
-              {/* Header */}
-              <div>
-                <h3 className="font-display font-black text-gray-900 dark:text-white text-3xl">
+            {/* Content — scrollável no mobile */}
+            <div className="p-5 sm:p-8 flex flex-col gap-5 sm:gap-6 overflow-y-auto" style={{ maxHeight: "90dvh" }}>
+              <div className="pr-8">
+                <h3 className="font-display font-black text-gray-900 dark:text-white text-2xl sm:text-3xl">
                   {modal.title}
                 </h3>
                 <p className="text-[#667eea] text-sm font-medium mt-1">Detalhes do projeto</p>
               </div>
 
-              {/* Sobre */}
               <div>
                 <h4 className="font-display font-bold text-gray-900 dark:text-white text-base mb-2">Sobre o projeto</h4>
                 <p className="font-body text-gray-600 dark:text-[#c8d0e0] text-sm leading-[1.8]">
@@ -177,7 +246,6 @@ export default function Projetos() {
                 </p>
               </div>
 
-              {/* Tecnologias */}
               {modal.detalhes?.tecnologias?.length > 0 && (
                 <div>
                   <h4 className="font-display font-bold text-gray-900 dark:text-white text-base mb-3">Tecnologias utilizadas</h4>
@@ -193,11 +261,10 @@ export default function Projetos() {
                 </div>
               )}
 
-              {/* Footer */}
               <div className="flex justify-end pt-1">
                 <a
-                  href={modal.url}
-                  target="_blank"
+                  href={modal.url || "#contato"}
+                  target={modal.url ? "_blank" : "_self"}
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 font-display font-bold text-sm text-white
                     bg-esr-gradient px-6 py-3 rounded-xl no-underline

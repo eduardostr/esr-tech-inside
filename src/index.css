@@ -197,6 +197,7 @@ code {
   to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
+
 /* ── Section backgrounds (responds to dark/light mode) ── */
 .bg-section-hero {
   background: linear-gradient(135deg, #f4f7ff 0%, #eef2ff 55%, #e4ecff 100%);
