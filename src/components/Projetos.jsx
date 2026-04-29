@@ -35,6 +35,22 @@ const projects = [
       tecnologias: ["HTML", "CSS", "Tailwind", "JavaScript", "React"],
     },
   },
+  {
+    title: "Paraíso Pet",
+    category: "Site Institucional",
+    desc: "Site para pet shop com foco em apresentar os serviços, produtos e facilitar o contato com tutores de animais de estimação.",
+    url: "https://paraiso-pet.vercel.app/",
+    preview: (
+      <>
+        <img src="/Shot_ParaisoPet.png"        alt="Paraíso Pet" className="hidden sm:block w-full h-full object-cover object-top" />
+        <img src="/Shot_ParaisoPet_Mobile.png" alt="Paraíso Pet" className="block sm:hidden w-full h-full object-cover object-top" />
+      </>
+    ),
+    detalhes: {
+      sobre: "O Paraíso Pet é um pet shop dedicado a oferecer os melhores produtos e serviços para animais de estimação. O site foi desenvolvido para apresentar o portfólio de serviços, facilitar o contato com os clientes e transmitir o carinho e cuidado que a marca tem com cada pet.",
+      tecnologias: ["HTML", "CSS", "Tailwind", "JavaScript", "React"],
+    },
+  },
 ];
 
 /* ── Arrow button ── */
@@ -65,21 +81,13 @@ export default function Projetos() {
   const { dark } = useTheme();
   const [current, setCurrent] = useState(0);
   const [modal, setModal] = useState(null);
-  const prevRef = useRef(0);
   const touchStartX = useRef(0);
 
   const navigate = (dir) => {
-    prevRef.current = current;
     setCurrent(i => dir === "right"
-      ? Math.min(projects.length - 1, i + 1)
-      : Math.max(0, i - 1)
+      ? (i + 1) % projects.length
+      : (i - 1 + projects.length) % projects.length
     );
-  };
-
-  const goTo = (i) => {
-    if (i === current) return;
-    prevRef.current = current;
-    setCurrent(i);
   };
 
   const prev = () => navigate("left");
@@ -125,7 +133,7 @@ export default function Projetos() {
             {/* Seta esquerda */}
             <div className="flex-shrink-0">
               {projects.length > 1
-                ? <Arrow dir="left" onClick={prev} disabled={current === 0} />
+                ? <Arrow dir="left" onClick={prev} disabled={false} />
                 : <div className="w-9 sm:w-11" />}
             </div>
 
@@ -133,16 +141,13 @@ export default function Projetos() {
             <div className="relative flex-1 max-w-[860px] aspect-[9/16] sm:aspect-[1920/905] rounded-2xl overflow-hidden">
               {projects.map((p, i) => {
                 const isActive = i === current;
-                const wasActive = prevRef.current === i;
-                if (!isActive && !wasActive) return null;
-
                 return (
                   <div
                     key={p.title}
                     style={{
                       position: "absolute",
                       inset: 0,
-                      transition: "opacity 480ms ease",
+                      transition: "opacity 500ms ease",
                       opacity: isActive ? 1 : 0,
                       pointerEvents: isActive ? "auto" : "none",
                       zIndex: isActive ? 2 : 1,
@@ -162,7 +167,7 @@ export default function Projetos() {
             {/* Seta direita */}
             <div className="flex-shrink-0">
               {projects.length > 1
-                ? <Arrow dir="right" onClick={next} disabled={current === projects.length - 1} />
+                ? <Arrow dir="right" onClick={next} disabled={false} />
                 : <div className="w-9 sm:w-11" />}
             </div>
           </div>
