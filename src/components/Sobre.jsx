@@ -141,7 +141,7 @@ export default function Sobre() {
             <div className="flex flex-wrap gap-3 mt-1">
               {/* Instagram */}
               <a
-                href="https://www.instagram.com/edurodriguesdr/"
+                href="https://www.instagram.com/esrtechinside/"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 font-display font-bold text-sm text-white
